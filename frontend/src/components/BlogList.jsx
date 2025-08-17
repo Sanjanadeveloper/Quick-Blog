@@ -9,6 +9,7 @@ const BlogList = () => {
   const { blogs, input } = useAppContext();
 
   const filteredBlogs = () => {
+    if (!blogs || !Array.isArray(blogs)) return [];
     if (input === "") {
       return blogs;
     }
@@ -46,8 +47,8 @@ const BlogList = () => {
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4
       gap-8 mb-24 sm:mx-16 xl:mx-40"
       >
-        {/* {filteredBlogs() */}
-        {blog_data
+        {filteredBlogs()
+        // {blog_data
           .filter((blog) => (menu === "All" ? true : blog.category === menu))
           .map((blog) => (
             <BlogCard key={blog._id} blog={blog} />

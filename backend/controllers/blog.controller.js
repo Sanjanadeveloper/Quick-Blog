@@ -2,6 +2,7 @@ import fs from "fs";
 import imagekit from "../configs/imageKit.js";
 import Blog from "../models/Blog.model.js";
 import Comment from "../models/Comment.model.js";
+import main from "../configs/gemini.js";
 
 export const addBlog = async (req, res) => {
   try {
@@ -9,6 +10,10 @@ export const addBlog = async (req, res) => {
       req.body.blog
     );
     const imageFile = req.file;
+
+    console.log("Received blog data:", req.body.blog);
+    console.log("Received file:", req.file);
+
 
     if (!title || !description || !category || !imageFile) {
       return res.json({ success: false, message: "Missing required fields" });
@@ -99,7 +104,7 @@ export const togglePublish = async (req, res) => {
 export const addComment = async (req, res) => {
   try {
     const { blog, name, content } = req.body;
-    await Comment.create({ blog, name, content });
+    await Comment.create({ blog, name, content, isApproved: true });
     res.json({ success: true, message: "Comment added" });
   } catch (error) {
     res.json({ success: false, message: error.message });
@@ -118,3 +123,41 @@ export const getBlogComments = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+
+export const generateContent = async (req, res) => {
+  try {
+    console.log("Generate content called with body:", req.body); // Debug log
+    const { prompt } = req.body;
+    if (!prompt) {
+      console.log("No prompt provided"); // Debug log
+      return res.json({ success: false, message: "Prompt is required" });
+    }
+
+    console.log("Generating content for prompt:", prompt); // Debug log
+
+    const enhancedPrompt = `Write a comprehensive blog post about "${prompt}". 
+    
+    Requirements:
+    - Write at least 500-800 words
+    - Include an engaging introduction
+    - Add 3-4 main sections with subheadings
+    - Use bullet points and lists where appropriate
+    - Include practical examples or tips
+    - End with a conclusion
+    - Write in a conversational, engaging tone
+    - Format with proper HTML tags like <h2>, <h3>, <p>, <ul>, <li>
+    
+    Make it informative, well-structured, and valuable for readers.`;
+    
+    console.log("Enhanced prompt:", enhancedPrompt); // Debug log
+    
+    const content = await main(enhancedPrompt);
+    console.log("Content generated successfully, length:", content?.length); // Debug log
+    
+    res.json({ success: true, content: content });
+  } catch (error) {
+    console.error("Error in generateContent:", error); // Debug log
+    res.json({ success: false, message: error.message });
+  }
+}
