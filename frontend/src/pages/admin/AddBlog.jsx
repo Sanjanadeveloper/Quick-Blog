@@ -16,6 +16,7 @@ const AddBlog = () => {
   const [image, setImage] = useState(false);
   const [title, setTitle] = useState("");
   const [subTitle, setSubTitle] = useState("");
+  const [author, setAuthor] = useState("Admin");
   const [category, setCategory] = useState("Startup");
   const [isPublished, setIsPublished] = useState(false);
 
@@ -65,7 +66,7 @@ const AddBlog = () => {
       setIsAdding(true)
 
       const blog = {
-        title, subTitle,
+        title, subTitle, author,
         description: quillRef.current?.root?.innerHTML || "",
         category, isPublished 
       }
@@ -87,6 +88,8 @@ const AddBlog = () => {
         toast.success(data.message);
         setImage(false)
         setTitle("")
+        setSubTitle("")
+        setAuthor("Admin")
         quillRef.current.root.innerHTML = ""
         setCategory("Startup")
       }
@@ -141,6 +144,15 @@ const AddBlog = () => {
           className="w-full max-w-lg mt-2 p-2 border border-gray-300 outline-none rounded"
           onChange={(e) => setSubTitle(e.target.value)}
           value={subTitle}
+        />
+        <p className="mt-4">Author</p>
+        <input
+          type="text"
+          placeholder="Author name"
+          required
+          className="w-full max-w-lg mt-2 p-2 border border-gray-300 outline-none rounded"
+          onChange={(e) => setAuthor(e.target.value)}
+          value={author}
         />
 
         <p className="mt-4">Blog Description</p>

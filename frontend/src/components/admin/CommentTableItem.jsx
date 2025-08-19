@@ -23,6 +23,8 @@ const CommentTableItem = ({ comment, fetchComments }) => {
     }
   }
 
+
+
   const deleteComment = async () => {
     try {
       const confirm = window.confirm("Are you sure you want to delete this comment?");
@@ -40,8 +42,8 @@ const CommentTableItem = ({ comment, fetchComments }) => {
     }
   }
   return (
-    <tr className="order-y border-gray-300">
-      <td className="pc-6 py-4">
+    <tr className="border-y border-gray-300">
+      <td className="px-6 py-4">
         <b className="font-medium text-gray-600">Blog</b> : {blog.title}
         <br />
         <br />

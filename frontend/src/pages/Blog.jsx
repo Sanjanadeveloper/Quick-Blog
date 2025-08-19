@@ -21,9 +21,14 @@ const Blog = () => {
   const fetchBlogData = async () => {
     try {
       const {data} = await axios.get(`/api/blog/${id}`)
-      data.success ? setData(data.blog) : toast.error(data.message)
+      if (data.success) {
+        setData(data.blog)
+      } else {
+        toast.error(data.message || "Failed to fetch blog")
+      }
     } catch (error) {
-      toast.error(error.message)
+      console.error("Error fetching blog:", error)
+      toast.error(error.response?.data?.message || "Failed to fetch blog")
     }
   };
 
@@ -32,9 +37,12 @@ const Blog = () => {
       const {data} = await axios.post('/api/blog/comments', {blogId: id})
       if(data.success){
         setComments(data.comments)
+      } else {
+        console.error("Failed to fetch comments:", data.message)
       }
     } catch (error) {
-      toast.error(error.message)
+      console.error("Error fetching comments:", error)
+      toast.error("Failed to load comments")
     }
   };
 
@@ -75,9 +83,9 @@ const Blog = () => {
         <h1 className="text-2xl sm:text-5xl font-semibold max-w-2xl mx-auto text-gray-800">
           {data.title}
         </h1>
-        <h2 className="my-5 max-w-lg truncate mx-auto">{data.subtitle}</h2>
+        <h2 className="my-5 max-w-lg truncate mx-auto">{data.subTitle}</h2>
         <p className="inline-block py-1 px-4 rounded-full mb-6 border text-sm border-primary/35 bg-primary/5 font-medium text-primary">
-          Michael Brown
+          {data.author || "Admin"}
         </p>
       </div>
 
@@ -91,7 +99,7 @@ const Blog = () => {
         {/* comments section */}
         <div className="mt-14 mb-10 max-w-3xl mx-auto">
           <p className="font-semibold mb-4">Comments ({comments.length})</p>
-          <div flex flex-col gap-4>
+          <div className="flex flex-col gap-4">
             {comments.map((item, index) => (
               <div
                 key={index}

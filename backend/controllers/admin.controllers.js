@@ -9,10 +9,22 @@ export const adminLogin = async (req ,res) => {
     try {
         const {email, password} = req.body;
 
-        if(email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD){
+        // Require environment variables for production
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        const jwtSecret = process.env.JWT_SECRET;
+        
+        if (!adminEmail || !adminPassword || !jwtSecret) {
+            return res.status(500).json({ 
+                success: false, 
+                message: "Server configuration error" 
+            });
+        }
+
+        if(email !== adminEmail || password !== adminPassword){
             return res.json({success: false, message: "Invalid Credentials"})
         }
-        const token = jwt.sign({email}, process.env.JWT_SECRET)
+        const token = jwt.sign({email}, jwtSecret)
         res.json({success: true, token})
     } catch (error) {
         res.json({success: false, message: error.message})
@@ -73,3 +85,4 @@ export const approvedCommentById = async (req, res) => {
         res.json({success: false, message: error.message})
     }
 }
+

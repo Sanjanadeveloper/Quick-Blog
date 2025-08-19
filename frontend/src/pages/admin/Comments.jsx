@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
-  const [filter, setFilter] = useState("Not Approved");
+  const [filter, setFilter] = useState("Approved");
 
   const {axios} = useAppContext()
 

@@ -12,10 +12,11 @@ const auth = (req, res, next) => {
   const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
   
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
   } catch (error) {
-    res.json({ success: false, message: "Invalid token" });
+    res.status(401).json({ success: false, message: "Invalid token" });
   }
 };
 

@@ -3,24 +3,31 @@ import { assets, dashboard_data } from '../../assets/assets'
 import BlogTableItem from '../../components/admin/BlogTableItem'
 import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
 
   const [dashboardData, setDashboardData] = useState({
     blogs: 0,
     comments: 0,
-    draft: 0,
+    drafts: 0,
     recentBlogs: []
   })
 
   const {axios} = useAppContext()
+  const navigate = useNavigate()
 
   const fetchDashboard = async () => {
     try {
       const {data} = await axios.get("/api/admin/dashboard")
-      data.success ? setDashboardData(data.dashboardData) : toast.error(data.message)
+      if (data.success) {
+        setDashboardData(data.dashboardData)
+      } else {
+        toast.error(data.message || "Failed to fetch dashboard data")
+      }
     } catch (error) {
-      toast.error(error.message)
+      console.error("Error fetching dashboard:", error)
+      toast.error(error.response?.data?.message || "Failed to fetch dashboard data")
     }
   }
 
@@ -31,7 +38,10 @@ const Dashboard = () => {
   return (
     <div className='flex-1 p-4 md:p-10 bg-blue-50/50'>
       <div className='flex flex-wrap gap-4'>
-        <div className='flex items-center gap-4 bg-white p-4 min-w-58  rounded shadow cursor-pointer hover:scale-105 transition-all'>
+        <div 
+          onClick={() => navigate('/admin/listBlog')}
+          className='flex items-center gap-4 bg-white p-4 min-w-58  rounded shadow cursor-pointer hover:scale-105 hover:shadow-lg transition-all'
+        >
           <img src={assets.dashboard_icon_1} alt="" />
           <div>
             <p className='text-xl font-semibold text-gray-600'>{dashboardData.blogs}</p>
@@ -39,7 +49,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-         <div className='flex items-center gap-4 bg-white p-4 min-w-58  rounded shadow cursor-pointer hover:scale-105 transition-all'>
+         <div 
+          onClick={() => navigate('/admin/comments')}
+          className='flex items-center gap-4 bg-white p-4 min-w-58  rounded shadow cursor-pointer hover:scale-105 hover:shadow-lg transition-all'
+        >
           <img src={assets.dashboard_icon_2} alt="" />
           <div>
             <p className='text-xl font-semibold text-gray-600'>{dashboardData.comments}</p>
@@ -47,10 +60,13 @@ const Dashboard = () => {
           </div>
         </div>
 
-         <div className='flex items-center gap-4 bg-white p-4 min-w-58  rounded shadow cursor-pointer hover:scale-105 transition-all'>
+         <div 
+          onClick={() => navigate('/admin/listBlog')}
+          className='flex items-center gap-4 bg-white p-4 min-w-58  rounded shadow cursor-pointer hover:scale-105 hover:shadow-lg transition-all'
+        >
           <img src={assets.dashboard_icon_3} alt="" />
           <div>
-            <p className='text-xl font-semibold text-gray-600'>{dashboardData.draft}</p>
+            <p className='text-xl font-semibold text-gray-600'>{dashboardData.drafts}</p>
             <p className='text-gray-400 font-light'>Drafts</p>
           </div>
         </div>

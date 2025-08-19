@@ -6,7 +6,7 @@ import main from "../configs/gemini.js";
 
 export const addBlog = async (req, res) => {
   try {
-    const { title, subTitle, description, category, isPublished } = JSON.parse(
+    const { title, subTitle, description, category, isPublished, author } = JSON.parse(
       req.body.blog
     );
     const imageFile = req.file;
@@ -46,6 +46,7 @@ export const addBlog = async (req, res) => {
       category,
       image,
       isPublished,
+      author: author || "Admin",
     });
     res.json({ success: true, message: "Blog added successfully" });
   } catch (error) {
@@ -69,6 +70,13 @@ export const getBlogById = async (req, res) => {
     if (!blog) {
       return res.json({ success: false, message: "Blog not found" });
     }
+    
+    // Ensure blog has an author field
+    if (!blog.author) {
+      blog.author = "Admin";
+      await blog.save();
+    }
+    
     res.json({ success: true, blog });
   } catch (error) {
     res.json({ success: false, message: error.message });
