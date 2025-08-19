@@ -9,10 +9,7 @@ const app = express()
 //Middlewares
 // Security middleware
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || "http://localhost:5173",
-    "https://quick-blog-frontend-chi.vercel.app"
-  ],
+  origin: true, // Allow all origins to prevent CORS issues
   credentials: true
 }))
 app.use(express.json({ limit: '10mb' }))
